@@ -4,6 +4,7 @@
 
 **An Authoritative Personal Operating System for Academic Dominance & Rigorous Execution**
 
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-NEXUS_OS-10b981?style=for-the-badge)](https://the-pocket-saver.vercel.app/)
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2FBhanu-teja-VCE%2Fthe-pocket-saver&env=GEMINI_API_KEY)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
@@ -16,7 +17,7 @@
 
 *Designed to eliminate distractions, track strict schedule execution, and enforce focus with AI-powered supervision.*
 
-[Deploy to Vercel](#-deploy-to-vercel) · [Report Bug](https://github.com/Bhanu-teja-VCE/the-pocket-saver/issues)
+[Live Demo](https://the-pocket-saver.vercel.app/) · [Deploy to Vercel](#-deploy-to-vercel) · [Report Bug](https://github.com/Bhanu-teja-VCE/the-pocket-saver/issues)
 
 </div>
 
