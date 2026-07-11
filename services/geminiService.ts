@@ -1,17 +1,17 @@
 import { GoogleGenAI } from "@google/genai";
 import { SYSTEM_INSTRUCTION } from '../constants';
 
-const apiKey = process.env.API_KEY || '';
-const ai = new GoogleGenAI({ apiKey });
-
 export const generateSupervisorResponse = async (
   userMessage: string,
   systemContext: any
 ) => {
+  const apiKey = process.env.GEMINI_API_KEY || process.env.API_KEY || localStorage.getItem("GEMINI_API_KEY") || '';
+
   if (!apiKey) {
-    return "SYSTEM ERROR: API_KEY_MISSING. Contact Administrator.";
+    return "SYSTEM ERROR: API_KEY_MISSING. Please configure your GEMINI_API_KEY in settings or localStorage.";
   }
 
+  const ai = new GoogleGenAI({ apiKey });
   const contextString = JSON.stringify(systemContext, null, 2);
   
   const prompt = `
@@ -27,7 +27,7 @@ export const generateSupervisorResponse = async (
 
   try {
     const response = await ai.models.generateContent({
-      model: 'gemini-3-flash-preview',
+      model: 'gemini-1.5-flash',
       contents: prompt,
       config: {
         systemInstruction: SYSTEM_INSTRUCTION,
