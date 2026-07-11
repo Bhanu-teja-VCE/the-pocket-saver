@@ -1,71 +1,24 @@
-<!DOCTYPE html>
-<html lang="en" class="dark">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>NEXUS // OS</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-      tailwind.config = {
-        darkMode: 'class',
-        theme: {
-          extend: {
-            colors: {
-              nexus: {
-                950: '#050505',
-                900: '#0a0a0a',
-                800: '#171717',
-                green: '#10b981',
-                red: '#f43f5e',
-                yellow: '#f59e0b',
-                blue: '#3b82f6',
-              }
-            },
-            fontFamily: {
-              mono: ['ui-monospace', 'SFMono-Regular', 'Menlo', 'Monaco', 'Consolas', "Liberation Mono", "Courier New", 'monospace'],
-              sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Helvetica Neue', 'Arial', 'sans-serif'],
-            }
-          }
-        }
-      }
-    </script>
-    <style>
-      body {
-        background-color: #050505;
-        color: #e5e5e5;
-      }
-      /* Custom scrollbar for raw terminal look */
-      ::-webkit-scrollbar {
-        width: 6px;
-      }
-      ::-webkit-scrollbar-track {
-        background: #0a0a0a;
-      }
-      ::-webkit-scrollbar-thumb {
-        background: #262626;
-      }
-      ::-webkit-scrollbar-thumb:hover {
-        background: #404040;
-      }
-    </style>
-
-  <script type="importmap">
-{
-  "imports": {
-    "react/": "https://esm.sh/react@^19.2.3/",
-    "react": "https://esm.sh/react@^19.2.3",
-    "lucide-react": "https://esm.sh/lucide-react@^0.562.0",
-    "@google/genai": "https://esm.sh/@google/genai@^1.37.0",
-    "recharts": "https://esm.sh/recharts@^3.6.0",
-    "react-markdown": "https://esm.sh/react-markdown@^10.1.0",
-    "react-dom/": "https://esm.sh/react-dom@^19.2.3/"
-  }
-}
-</script>
-  <script type="module" crossorigin src="./assets/index-C4kvS9vi.js"></script>
-  <link rel="stylesheet" crossorigin href="./assets/index-tn0RQdqM.css">
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <link rel="icon" type="image/svg+xml" href="./vite.svg" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>The Pocket Saver</title>
+  <script type="module" crossorigin src="./assets/index-DLHOb4XW.js"></script>
+  <link rel="stylesheet" crossorigin href="./assets/index-DalFLBHM.css">
 </head>
-  <body>
-    <div id="root"></div>
+
+<body>
+  <script>
+    // Set theme before React loads to prevent flash and ensure proper initialization
+    (function () {
+      const theme = localStorage.getItem('theme') || 'light';
+      document.documentElement.classList.add(theme);
+    })();
+  </script>
+  <div id="root"></div>
 </body>
+
 </html>
