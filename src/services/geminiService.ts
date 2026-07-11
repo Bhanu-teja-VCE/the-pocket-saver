@@ -76,3 +76,102 @@ Guidelines:
         throw error;
     }
 };
+
+export interface ParsedTransaction {
+    amount: number;
+    description: string;
+    category: string;
+    type: 'income' | 'expense';
+    date: string;
+    isFallback: boolean;
+}
+
+export const parseNaturalLanguageTransaction = async (
+    text: string
+): Promise<ParsedTransaction> => {
+    const apiKey = localStorage.getItem('GEMINI_API_KEY') || '';
+    
+    if (!apiKey) {
+        // Fallback simple regex parser
+        const amountRegex = /(\d+(?:\.\d{1,2})?)/;
+        const amountMatch = text.match(amountRegex);
+        const amount = amountMatch ? parseFloat(amountMatch[1]) : 0;
+        
+        let type: 'income' | 'expense' = 'expense';
+        let category = 'General';
+        let description = text;
+        
+        const lowerText = text.toLowerCase();
+        if (
+            lowerText.includes('got') || 
+            lowerText.includes('received') || 
+            lowerText.includes('bonus') || 
+            lowerText.includes('earned') || 
+            lowerText.includes('income') || 
+            lowerText.includes('+') || 
+            lowerText.includes('salary')
+        ) {
+            type = 'income';
+            category = 'Salary';
+        }
+        
+        return {
+            amount,
+            description,
+            category,
+            type,
+            date: new Date().toISOString().split('T')[0],
+            isFallback: true
+        };
+    }
+
+    const ai = new GoogleGenAI({ apiKey });
+    const systemInstruction = `
+You are a transaction parser. Extract data from natural language and return it strictly as a JSON object.
+
+Allowed Categories for expenses: "Food", "Utilities", "Rent", "Shopping", "Entertainment", "Travel", "Healthcare", "General".
+Allowed Categories for income: "Salary", "Investments", "General".
+
+Allowed Types: "income" or "expense".
+
+JSON format to return:
+{
+  "amount": number (positive float),
+  "description": "string describing the item/event",
+  "category": "one of the allowed categories above",
+  "type": "income" | "expense",
+  "date": "YYYY-MM-DD" (use the current date ${new Date().toISOString().split('T')[0]} as default unless specified)
+}
+
+Do not return any markdown code block formatting (like \`\`\`json). Just return the raw JSON string. If you cannot parse it, default to a category of "General" and type "expense".
+`;
+
+    try {
+        const response = await ai.models.generateContent({
+            model: 'gemini-1.5-flash',
+            contents: text,
+            config: {
+                systemInstruction,
+                responseMimeType: 'application/json',
+                maxOutputTokens: 150,
+            }
+        });
+
+        if (!response.text) {
+            throw new Error('Empty response');
+        }
+
+        const data = JSON.parse(response.text.trim());
+        return {
+            amount: Number(data.amount) || 0,
+            description: data.description || text,
+            category: data.category || 'General',
+            type: (data.type === 'income' || data.type === 'expense') ? data.type : 'expense',
+            date: data.date || new Date().toISOString().split('T')[0],
+            isFallback: false
+        };
+    } catch (error) {
+        console.error('Failed to parse natural language transaction:', error);
+        throw error;
+    }
+};

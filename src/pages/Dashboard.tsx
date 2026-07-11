@@ -24,13 +24,15 @@ import {
     Target,
     Download,
     FileText,
-    FileSpreadsheet
+    FileSpreadsheet,
+    Sparkles
 } from 'lucide-react';
 import { motion } from 'framer-motion';
 import type { TransactionType } from '../context/FinanceContext';
 import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import * as XLSX from 'xlsx';
+import { parseNaturalLanguageTransaction } from '../services/geminiService';
 
 const COLORS = ['#0088FE', '#00C49F', '#FFBB28', '#FF8042', '#8884d8'];
 
@@ -45,6 +47,57 @@ export function Dashboard() {
     const [isAdding, setIsAdding] = useState(false);
     const [isAddingGoal, setIsAddingGoal] = useState(false);
     const [showExportMenu, setShowExportMenu] = useState(false);
+    
+    // AI Quick-Add states
+    const [quickAddInput, setQuickAddInput] = useState('');
+    const [isParsing, setIsParsing] = useState(false);
+    const [quickAddFeedback, setQuickAddFeedback] = useState('');
+    const [feedbackType, setFeedbackType] = useState<'success' | 'info' | 'error'>('info');
+
+    const handleQuickAdd = async (e: React.FormEvent) => {
+        e.preventDefault();
+        if (!quickAddInput.trim() || isParsing) return;
+
+        const text = quickAddInput.trim();
+        setQuickAddInput('');
+        setQuickAddFeedback('Processing transaction...');
+        setFeedbackType('info');
+        setIsParsing(true);
+
+        try {
+            const parsed = await parseNaturalLanguageTransaction(text);
+            
+            if (parsed.amount <= 0) {
+                setQuickAddFeedback('Could not extract a valid amount. Please specify a value (e.g. 500).');
+                setFeedbackType('error');
+                return;
+            }
+
+            addTransaction({
+                amount: parsed.amount,
+                description: parsed.description,
+                category: parsed.category,
+                type: parsed.type,
+                date: parsed.date
+            });
+
+            if (parsed.isFallback) {
+                setQuickAddFeedback(`Added transaction: $${parsed.amount.toFixed(2)} ${parsed.type === 'income' ? 'Income' : 'Expense'} for "${parsed.description}". (Add a Gemini key in settings for full category parsing!)`);
+                setFeedbackType('info');
+            } else {
+                setQuickAddFeedback(`AI Added: $${parsed.amount.toFixed(2)} ${parsed.type === 'income' ? 'Income' : 'Expense'} (${parsed.category}) for "${parsed.description}".`);
+                setFeedbackType('success');
+            }
+        } catch (error) {
+            console.error(error);
+            setQuickAddFeedback('Failed to parse. Please try the manual form below.');
+            setFeedbackType('error');
+        } finally {
+            setIsParsing(false);
+            // Hide feedback after 6 seconds
+            setTimeout(() => setQuickAddFeedback(''), 6000);
+        }
+    };
 
     const [newTransaction, setNewTransaction] = useState({
         amount: '',
@@ -222,6 +275,41 @@ export function Dashboard() {
                         </div>
                     )}
                 </div>
+            </div>
+            {/* AI Quick-Add Bar */}
+            <div className="bg-gradient-to-r from-primary-500/10 via-primary-600/5 to-transparent border border-primary-500/20 p-6 rounded-3xl space-y-3 shadow-sm">
+                <div className="flex items-center space-x-2 text-primary-700 dark:text-primary-400 font-semibold text-sm">
+                    <Sparkles className="h-4 w-4 text-primary-500" />
+                    <span>AI Quick-Add (Try: "I got a bonus of 500" or "Spent 15 on dinner")</span>
+                </div>
+                <form onSubmit={handleQuickAdd} className="flex gap-2">
+                    <input 
+                        type="text"
+                        placeholder="Type transaction detail here..."
+                        value={quickAddInput}
+                        onChange={(e) => setQuickAddInput(e.target.value)}
+                        disabled={isParsing}
+                        className="flex-1 px-4 py-3 rounded-xl border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 text-gray-900 dark:text-white focus:outline-none focus:ring-2 focus:ring-primary-500 focus:border-transparent text-sm shadow-inner placeholder-gray-400 dark:placeholder-gray-500"
+                    />
+                    <button 
+                        type="submit" 
+                        disabled={isParsing || !quickAddInput.trim()}
+                        className="px-6 py-3 bg-primary-600 hover:bg-primary-700 text-white font-semibold rounded-xl text-sm transition-colors shadow flex items-center gap-1.5 disabled:opacity-50"
+                    >
+                        {isParsing ? 'Parsing...' : 'Add'}
+                        <ArrowUpRight className="h-4 w-4" />
+                    </button>
+                </form>
+                {quickAddFeedback && (
+                    <div className={cn(
+                        "text-xs px-3 py-1.5 rounded-lg border",
+                        feedbackType === 'success' ? "bg-green-50 dark:bg-green-950/20 border-green-200 dark:border-green-900/30 text-green-700 dark:text-green-400" :
+                        feedbackType === 'error' ? "bg-red-50 dark:bg-red-950/20 border-red-200 dark:border-red-900/30 text-red-700 dark:text-red-400" :
+                        "bg-blue-50 dark:bg-blue-950/20 border-blue-200 dark:border-blue-900/30 text-blue-700 dark:text-blue-400"
+                    )}>
+                        {quickAddFeedback}
+                    </div>
+                )}
             </div>
 
             {/* Summary Cards */}
