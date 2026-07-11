@@ -90,18 +90,17 @@ export const parseNaturalLanguageTransaction = async (
     text: string
 ): Promise<ParsedTransaction> => {
     const apiKey = localStorage.getItem('GEMINI_API_KEY') || '';
-    
-    if (!apiKey) {
-        // Fallback simple regex parser
+
+    const localRegexParse = (input: string): ParsedTransaction => {
         const amountRegex = /(\d+(?:\.\d{1,2})?)/;
-        const amountMatch = text.match(amountRegex);
+        const amountMatch = input.match(amountRegex);
         const amount = amountMatch ? parseFloat(amountMatch[1]) : 0;
         
         let type: 'income' | 'expense' = 'expense';
         let category = 'General';
-        let description = text;
+        let description = input;
         
-        const lowerText = text.toLowerCase();
+        const lowerText = input.toLowerCase();
         if (
             lowerText.includes('got') || 
             lowerText.includes('received') || 
@@ -123,6 +122,10 @@ export const parseNaturalLanguageTransaction = async (
             date: new Date().toISOString().split('T')[0],
             isFallback: true
         };
+    };
+    
+    if (!apiKey) {
+        return localRegexParse(text);
     }
 
     const ai = new GoogleGenAI({ apiKey });
@@ -171,7 +174,7 @@ Do not return any markdown code block formatting (like \`\`\`json). Just return 
             isFallback: false
         };
     } catch (error) {
-        console.error('Failed to parse natural language transaction:', error);
-        throw error;
+        console.error('Failed to parse with AI, falling back to regex:', error);
+        return localRegexParse(text);
     }
 };
