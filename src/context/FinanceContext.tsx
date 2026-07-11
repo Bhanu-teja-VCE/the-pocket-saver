@@ -20,20 +20,38 @@ export interface SavingsGoal {
     color: string;
 }
 
+export interface BudgetLimit {
+    [category: string]: number;
+}
+
 interface FinanceContextType {
     transactions: Transaction[];
     goals: SavingsGoal[];
+    budgets: BudgetLimit;
     addTransaction: (transaction: Omit<Transaction, 'id'>) => void;
     deleteTransaction: (id: string) => void;
     addGoal: (goal: Omit<SavingsGoal, 'id'>) => void;
     updateGoalProgress: (id: string, amount: number) => void;
     deleteGoal: (id: string) => void;
+    updateBudgetLimit: (category: string, limit: number) => void;
     totalIncome: number;
     totalExpenses: number;
     balance: number;
 }
 
 const FinanceContext = createContext<FinanceContextType | undefined>(undefined);
+
+// Default starting budgets for typical categories
+const DEFAULT_BUDGETS: BudgetLimit = {
+    'Food': 500,
+    'Utilities': 250,
+    'Rent': 1500,
+    'Shopping': 300,
+    'Entertainment': 200,
+    'Travel': 400,
+    'Healthcare': 150,
+    'General': 300
+};
 
 export function FinanceProvider({ children }: { children: React.ReactNode }) {
     const [transactions, setTransactions] = useState<Transaction[]>(() => {
@@ -46,6 +64,11 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
         return saved ? JSON.parse(saved) : [];
     });
 
+    const [budgets, setBudgets] = useState<BudgetLimit>(() => {
+        const saved = localStorage.getItem('budgets');
+        return saved ? JSON.parse(saved) : DEFAULT_BUDGETS;
+    });
+
     useEffect(() => {
         localStorage.setItem('transactions', JSON.stringify(transactions));
     }, [transactions]);
@@ -53,6 +76,10 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
     useEffect(() => {
         localStorage.setItem('goals', JSON.stringify(goals));
     }, [goals]);
+
+    useEffect(() => {
+        localStorage.setItem('budgets', JSON.stringify(budgets));
+    }, [budgets]);
 
     const addTransaction = (transaction: Omit<Transaction, 'id'>) => {
         const newTransaction = { ...transaction, id: uuidv4() };
@@ -80,6 +107,13 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
         setGoals((prev) => prev.filter((g) => g.id !== id));
     };
 
+    const updateBudgetLimit = (category: string, limit: number) => {
+        setBudgets((prev) => ({
+            ...prev,
+            [category]: limit
+        }));
+    };
+
     const totalIncome = transactions
         .filter((t) => t.type === 'income')
         .reduce((acc, curr) => acc + curr.amount, 0);
@@ -95,11 +129,13 @@ export function FinanceProvider({ children }: { children: React.ReactNode }) {
             value={{
                 transactions,
                 goals,
+                budgets,
                 addTransaction,
                 deleteTransaction,
                 addGoal,
                 updateGoalProgress,
                 deleteGoal,
+                updateBudgetLimit,
                 totalIncome,
                 totalExpenses,
                 balance,

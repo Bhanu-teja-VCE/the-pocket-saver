@@ -38,7 +38,8 @@ export function Dashboard() {
     const {
         transactions, deleteTransaction, addTransaction,
         goals, addGoal, updateGoalProgress, deleteGoal,
-        totalIncome, totalExpenses, balance
+        totalIncome, totalExpenses, balance,
+        budgets, updateBudgetLimit
     } = useFinance();
 
     const [isAdding, setIsAdding] = useState(false);
@@ -276,99 +277,152 @@ export function Dashboard() {
                 </motion.div>
             </div>
 
-            {/* Savings Goals Section */}
+            {/* Savings Goals & Category Budgets Grid */}
             <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25 }}
+                className="grid grid-cols-1 lg:grid-cols-3 gap-8"
             >
-                <div className="flex justify-between items-center mb-4">
-                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Savings Goals</h3>
-                    <button
-                        onClick={() => setIsAddingGoal(!isAddingGoal)}
-                        className="text-primary-600 hover:text-primary-700 text-sm font-medium flex items-center"
-                    >
-                        <Plus className="h-4 w-4 mr-1" /> Add Goal
-                    </button>
-                </div>
-
-                {isAddingGoal && (
-                    <form onSubmit={handleAddGoal} className="mb-6 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <input
-                            type="text"
-                            placeholder="Goal Name"
-                            required
-                            value={newGoal.name}
-                            onChange={e => setNewGoal({ ...newGoal, name: e.target.value })}
-                            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
-                        />
-                        <input
-                            type="number"
-                            placeholder="Target Amount"
-                            required
-                            value={newGoal.targetAmount}
-                            onChange={e => setNewGoal({ ...newGoal, targetAmount: e.target.value })}
-                            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
-                        />
-                        <input
-                            type="number"
-                            placeholder="Current Amount"
-                            value={newGoal.currentAmount}
-                            onChange={e => setNewGoal({ ...newGoal, currentAmount: e.target.value })}
-                            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white"
-                        />
-                        <button type="submit" className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium">
-                            Create Goal
+                {/* Savings Goals (2/3 width) */}
+                <div className="lg:col-span-2 space-y-4">
+                    <div className="flex justify-between items-center mb-4">
+                        <h3 className="text-lg font-bold text-gray-900 dark:text-white">Savings Goals</h3>
+                        <button
+                            onClick={() => setIsAddingGoal(!isAddingGoal)}
+                            className="text-primary-600 hover:text-primary-700 text-sm font-medium flex items-center"
+                        >
+                            <Plus className="h-4 w-4 mr-1" /> Add Goal
                         </button>
-                    </form>
-                )}
+                    </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                    {goals.map(goal => {
-                        const progress = Math.min(100, (goal.currentAmount / goal.targetAmount) * 100);
-                        return (
-                            <div key={goal.id} className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700">
-                                <div className="flex justify-between items-start mb-4">
-                                    <div className="flex items-center">
-                                        <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 mr-3">
-                                            <Target className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                    {isAddingGoal && (
+                        <form onSubmit={handleAddGoal} className="mb-6 p-6 bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 grid grid-cols-1 md:grid-cols-4 gap-4">
+                            <input
+                                type="text"
+                                placeholder="Goal Name"
+                                required
+                                value={newGoal.name}
+                                onChange={e => setNewGoal({ ...newGoal, name: e.target.value })}
+                                className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                            />
+                            <input
+                                type="number"
+                                placeholder="Target Amount"
+                                required
+                                value={newGoal.targetAmount}
+                                onChange={e => setNewGoal({ ...newGoal, targetAmount: e.target.value })}
+                                className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                            />
+                            <input
+                                type="number"
+                                placeholder="Current Amount"
+                                value={newGoal.currentAmount}
+                                onChange={e => setNewGoal({ ...newGoal, currentAmount: e.target.value })}
+                                className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-900 dark:text-white text-sm"
+                            />
+                            <button type="submit" className="bg-primary-600 hover:bg-primary-700 text-white px-4 py-2 rounded-lg font-medium text-sm">
+                                Create Goal
+                            </button>
+                        </form>
+                    )}
+
+                    {goals.length === 0 ? (
+                        <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 text-center text-gray-500 dark:text-gray-400 text-sm">
+                            No savings goals set. Define one to track your savings milestones!
+                        </div>
+                    ) : (
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                            {goals.map(goal => {
+                                const progress = Math.min(100, (goal.currentAmount / goal.targetAmount) * 100);
+                                return (
+                                    <div key={goal.id} className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 hover:shadow-md transition-shadow">
+                                        <div className="flex justify-between items-start mb-4">
+                                            <div className="flex items-center">
+                                                <div className="p-2 rounded-lg bg-gray-100 dark:bg-gray-700 mr-3">
+                                                    <Target className="h-5 w-5 text-gray-600 dark:text-gray-300" />
+                                                </div>
+                                                <div>
+                                                    <h4 className="font-semibold text-gray-900 dark:text-white text-sm">{goal.name}</h4>
+                                                    <p className="text-xs text-gray-500 dark:text-gray-400">Target: {formatCurrency(goal.targetAmount)}</p>
+                                                </div>
+                                            </div>
+                                            <button onClick={() => deleteGoal(goal.id)} className="text-gray-400 hover:text-red-500 transition-colors">
+                                                <Trash2 className="h-4 w-4" />
+                                            </button>
                                         </div>
-                                        <div>
-                                            <h4 className="font-semibold text-gray-900 dark:text-white">{goal.name}</h4>
-                                            <p className="text-sm text-gray-500 dark:text-gray-400">Target: {formatCurrency(goal.targetAmount)}</p>
+                                        <div className="mb-2 flex justify-between text-xs">
+                                            <span className="text-gray-600 dark:text-gray-300 font-medium">{formatCurrency(goal.currentAmount)}</span>
+                                            <span className="font-bold text-primary-600">{progress.toFixed(0)}%</span>
+                                        </div>
+                                        <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                                            <div
+                                                className="h-full bg-primary-600 rounded-full transition-all duration-500"
+                                                style={{ width: `${progress}%` }}
+                                            />
+                                        </div>
+                                        <div className="mt-4 flex gap-2">
+                                            <button
+                                                onClick={() => updateGoalProgress(goal.id, 100)}
+                                                className="flex-1 py-1.5 text-xs font-semibold bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg transition-colors"
+                                            >
+                                                + $100
+                                            </button>
+                                            <button
+                                                onClick={() => updateGoalProgress(goal.id, 500)}
+                                                className="flex-1 py-1.5 text-xs font-semibold bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg transition-colors"
+                                            >
+                                                + $500
+                                            </button>
                                         </div>
                                     </div>
-                                    <button onClick={() => deleteGoal(goal.id)} className="text-gray-400 hover:text-red-500">
-                                        <Trash2 className="h-4 w-4" />
-                                    </button>
-                                </div>
-                                <div className="mb-2 flex justify-between text-sm">
-                                    <span className="text-gray-600 dark:text-gray-300">{formatCurrency(goal.currentAmount)}</span>
-                                    <span className="font-medium text-primary-600">{progress.toFixed(0)}%</span>
-                                </div>
-                                <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
-                                    <div
-                                        className="h-full bg-primary-600 rounded-full transition-all duration-500"
-                                        style={{ width: `${progress}%` }}
-                                    />
-                                </div>
-                                <div className="mt-4 flex gap-2">
-                                    <button
-                                        onClick={() => updateGoalProgress(goal.id, 100)}
-                                        className="flex-1 py-1.5 text-xs font-medium bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg transition-colors"
-                                    >
-                                        + $100
-                                    </button>
-                                    <button
-                                        onClick={() => updateGoalProgress(goal.id, 500)}
-                                        className="flex-1 py-1.5 text-xs font-medium bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 text-gray-700 dark:text-gray-200 rounded-lg transition-colors"
-                                    >
-                                        + $500
-                                    </button>
-                                </div>
-                            </div>
-                        );
-                    })}
+                                );
+                            })}
+                        </div>
+                    )}
+                </div>
+
+                {/* Category Budgets Manager (1/3 width) */}
+                <div className="space-y-4">
+                    <h3 className="text-lg font-bold text-gray-900 dark:text-white">Monthly Budgets</h3>
+                    <div className="bg-white dark:bg-gray-800 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 space-y-4">
+                        <div className="max-h-[300px] overflow-y-auto space-y-4 pr-1">
+                            {Object.keys(budgets).map(cat => {
+                                const spent = transactions
+                                    .filter(t => t.type === 'expense' && t.category === cat)
+                                    .reduce((sum, t) => sum + t.amount, 0);
+                                const limit = budgets[cat];
+                                const percent = Math.min(100, limit > 0 ? (spent / limit) * 100 : 0);
+                                
+                                return (
+                                    <div key={cat} className="space-y-1.5 animate-fade-in">
+                                        <div className="flex justify-between items-center text-xs">
+                                            <span className="font-semibold text-gray-800 dark:text-gray-200">{cat}</span>
+                                            <div className="flex items-center gap-1">
+                                                <span className="text-gray-500 dark:text-gray-400 font-medium">${spent.toFixed(0)} /</span>
+                                                <input 
+                                                    type="number"
+                                                    value={limit === 0 ? '' : limit}
+                                                    placeholder="0"
+                                                    onChange={(e) => updateBudgetLimit(cat, parseFloat(e.target.value) || 0)}
+                                                    className="w-14 bg-gray-55 dark:bg-gray-900 border border-gray-200 dark:border-gray-750 rounded px-1.5 py-0.5 text-center font-bold text-gray-800 dark:text-white focus:outline-none focus:ring-1 focus:ring-primary-500 text-[10px]"
+                                                />
+                                            </div>
+                                        </div>
+                                        <div className="h-2 bg-gray-100 dark:bg-gray-700 rounded-full overflow-hidden">
+                                            <div 
+                                                className={cn(
+                                                    "h-full rounded-full transition-all duration-550",
+                                                    percent >= 100 ? "bg-red-500" : percent >= 80 ? "bg-amber-500" : "bg-primary-500"
+                                                )}
+                                                style={{ width: `${percent}%` }}
+                                            />
+                                        </div>
+                                    </div>
+                                );
+                            })}
+                        </div>
+                    </div>
                 </div>
             </motion.div>
 
@@ -448,7 +502,7 @@ export function Dashboard() {
                 </div>
 
                 {isAdding && (
-                    <form onSubmit={handleAdd} className="p-6 bg-gray-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700 grid grid-cols-1 md:grid-cols-5 gap-4">
+                    <form onSubmit={handleAdd} className="p-6 bg-gray-50 dark:bg-gray-900/50 border-b border-gray-100 dark:border-gray-700 grid grid-cols-1 md:grid-cols-6 gap-4">
                         <input
                             type="text"
                             placeholder="Description"
@@ -466,8 +520,39 @@ export function Dashboard() {
                             className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         />
                         <select
+                            value={newTransaction.category}
+                            onChange={e => setNewTransaction({ ...newTransaction, category: e.target.value })}
+                            className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
+                        >
+                            {newTransaction.type === 'income' ? (
+                                <>
+                                    <option value="Salary">Salary 💰</option>
+                                    <option value="Investments">Investments 📈</option>
+                                    <option value="General">General 📦</option>
+                                </>
+                            ) : (
+                                <>
+                                    <option value="Food">Food 🍔</option>
+                                    <option value="Utilities">Utilities ⚡</option>
+                                    <option value="Rent">Rent 🏠</option>
+                                    <option value="Shopping">Shopping 🛒</option>
+                                    <option value="Entertainment">Entertainment 🎬</option>
+                                    <option value="Travel">Travel ✈️</option>
+                                    <option value="Healthcare">Healthcare 🏥</option>
+                                    <option value="General">General 📦</option>
+                                </>
+                            )}
+                        </select>
+                        <select
                             value={newTransaction.type}
-                            onChange={e => setNewTransaction({ ...newTransaction, type: e.target.value as TransactionType })}
+                            onChange={e => {
+                                const newType = e.target.value as TransactionType;
+                                setNewTransaction({ 
+                                    ...newTransaction, 
+                                    type: newType,
+                                    category: newType === 'income' ? 'Salary' : 'General'
+                                });
+                            }}
                             className="px-4 py-2 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-700 text-gray-900 dark:text-white"
                         >
                             <option value="expense">Expense</option>

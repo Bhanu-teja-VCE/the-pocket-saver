@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { Menu, X, Sun, Moon, LogOut, User, Wallet } from 'lucide-react';
+import { Menu, X, Sun, Moon, LogOut, User, Wallet, Settings } from 'lucide-react';
 import { cn } from '../utils';
 
 export function Navbar() {
@@ -18,6 +18,7 @@ export function Navbar() {
 
     const navLinks = [
         { name: 'Dashboard', path: '/dashboard' },
+        { name: 'AI Coach 🤖', path: '/coach' },
         { name: 'About', path: '/about' },
         { name: 'Blog', path: '/blog' },
         { name: 'Contact', path: '/contact' },
@@ -57,6 +58,14 @@ export function Navbar() {
                             className="p-2 rounded-full text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-primary-500"
                         >
                             {theme === 'light' ? <Moon className="h-5 w-5" /> : <Sun className="h-5 w-5" />}
+                        </button>
+
+                        <button
+                            onClick={() => window.dispatchEvent(new Event('toggle-settings'))}
+                            className="p-2 rounded-full text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-white focus:outline-none"
+                            title="Settings"
+                        >
+                            <Settings className="h-5 w-5" />
                         </button>
 
                         {user ? (
