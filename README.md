@@ -1,22 +1,22 @@
 <div align="center">
 
-# 🧠 NEXUS // Digital Brain
+# 💰 The Pocket Saver
 
-**An Authoritative Personal Operating System for Academic Dominance & Rigorous Execution**
+**Take Control of Your Personal Finances with Interactive Dashboards & Local Security**
 
-[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-NEXUS_OS-10b981?style=for-the-badge)](https://Bhanu-teja-VCE.github.io/the-pocket-saver/)
+[![Live Demo](https://img.shields.io/badge/🚀_Live_Demo-Demo-10b981?style=for-the-badge)](https://Bhanu-teja-VCE.github.io/the-pocket-saver/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 ![React](https://img.shields.io/badge/React-19-61DAFB?style=for-the-badge&logo=react&logoColor=black)
 ![TypeScript](https://img.shields.io/badge/TypeScript-5-3178C6?style=for-the-badge&logo=typescript&logoColor=white)
-![Vite](https://img.shields.io/badge/Vite-6-646CFF?style=for-the-badge&logo=vite&logoColor=white)
-![Google Gemini](https://img.shields.io/badge/Gemini_AI-1.5-4285F4?style=for-the-badge&logo=google&logoColor=white)
+![Vite](https://img.shields.io/badge/Vite-7-646CFF?style=for-the-badge&logo=vite&logoColor=white)
+![TailwindCSS](https://img.shields.io/badge/Tailwind_CSS-4-38B2AC?style=for-the-badge&logo=tailwind-css&logoColor=white)
 ![Recharts](https://img.shields.io/badge/Recharts-Data_Viz-FF6B6B?style=for-the-badge)
 
 <br/>
 
-*Designed to eliminate distractions, track strict schedule execution, and enforce focus with AI-powered supervision.*
+*Track expenses, set savings goals, and visualize your financial health with our intuitive and secure platform.*
 
-[Live Demo](https://Bhanu-teja-VCE.github.io/the-pocket-saver/) · [Report Bug](https://github.com/Bhanu-teja-VCE/the-pocket-saver/issues)
+[Live Demo](https://Bhanu-teja-VCE.github.io/the-pocket-saver/) · [Report Bug](https://github.com/Bhanu-teja-VCE/the-pocket-saver/issues) · [Request Feature](https://github.com/Bhanu-teja-VCE/the-pocket-saver/issues)
 
 </div>
 
@@ -24,53 +24,71 @@
 
 ## 📋 Table of Contents
 
-- [About NEXUS](#-about-nexus)
+- [About The Pocket Saver](#-about-the-pocket-saver)
 - [Key Features](#-key-features)
 - [Tech Stack](#-tech-stack)
-- [System Architecture](#-system-architecture)
+- [Project Structure](#-project-structure)
 - [Getting Started](#-getting-started)
-- [Deploy to Vercel](#-deploy-to-vercel)
 - [License](#-license)
 
 ---
 
-## 🧠 About NEXUS
+## 🧠 About The Pocket Saver
 
-**NEXUS // Digital Brain** is a cognitive environment designed for student productivity and strict scheduling. Built as a high-tech terminal dashboard using React, TypeScript, and Tailwind, it connects directly with **Google's Gemini 1.5 Flash** model to acts as an active AI "Supervisor." 
+**The Pocket Saver** is a clean, local-first personal finance tracking application. It bridges the gap between over-complicated enterprise budgeting software and simple spreadsheets. 
 
-The Supervisor monitors your current focus sessions, evaluates completed timeblocks, tracks distraction tallies, and dynamically nudges you to keep your execution rate at 100%.
+Built with **React 19**, **TypeScript 5**, and **Tailwind CSS v4**, it provides real-time financial tracking, budget analytics, and progress tracking for savings goals. All data is stored locally in your browser, guaranteeing absolute privacy and security for your financial telemetry.
 
 ---
 
 ## ✨ Key Features
 
-* 🛡️ **Timeblock Enforcement:** High-fidelity dashboard visualizing active, pending, and completed focus blocks.
-* 📈 **Weekly Analytics:** Beautiful Recharts execution stats showing weekly completion rates, focus scores, and distraction tallies.
-* 🤖 **AI Supervisor Console:** Conversational panel powered by `@google/genai` (Gemini API) that actively reviews student schedules and issues context-aware advice.
-* ⚡ **Strategic Priority Dashboard:** Dynamic priority highlighting for critical tasks to maximize daily learning output.
-* 🚨 **Nudge & Distraction Overlays:** Prompts to counter off-task habits and keep focus metrics above the warning threshold.
-* ⏰ **Integrated Clock HUD:** Real-time clock widget calibrated for academic sessions.
+* 📊 **Interactive Dashboard:** Live widgets displaying total balance, monthly income, monthly expenses, and dynamic progress bars for active savings goals.
+* 📈 **Visual Financial Analytics:** Interactive pie charts and bar graphs (powered by Recharts) showing expense categorization and monthly spending trends.
+* 💸 **Transaction Ledger:** Full expense/income manager to add, edit, and delete transactions with custom tags (e.g. food, rent, shopping).
+* 🎯 **Savings Goals:** Define, track, and log contributions to specific savings targets (e.g. vacation, emergency fund) with visual milestone metrics.
+* 📥 **Data Exports:** Export your financial records in one click to **Excel spreadsheets (XLSX)** or formatted **PDF statements**.
+* 🔒 **Local-First Security:** Encrypted local storage ensures no financial data ever leaves your device.
+* 🌓 **Dynamic Themes:** Clean transitions between Premium Light mode and Cyber Dark mode.
 
 ---
 
 ## 🛠️ Tech Stack
 
-* **Frontend Framework:** React 19 (Functional Components, Context API)
-* **Language:** TypeScript 5 (Strictly Typed Systems)
-* **Build Engine:** Vite 6
-* **AI Integration:** `@google/genai` (Google GenAI SDK)
-* **Data Visualization:** Recharts (Dynamic Bar graphs)
-* **Markdown Rendering:** React Markdown (AI output parsing)
+* **Frontend Framework:** React 19 (Hooks, Context API)
+* **Routing:** React Router DOM v7
+* **Language:** TypeScript 5 (Strictly Typed)
+* **Styling:** Tailwind CSS v4 (Glassmorphism & animations)
+* **Motion:** Framer Motion 12 (Smooth viewport transitions)
+* **Data Viz:** Recharts (Dynamic financial charts)
+* **Exports:** jsPDF, AutoTable, and SheetJS (XLSX)
 * **Icons:** Lucide React
 
 ---
 
+## 📂 Project Structure
+
+```
+the-pocket-saver/
+├── src/
+│   ├── components/     # UI elements (charts, tables, forms, protected routes)
+│   ├── context/        # Global states (Auth, Finance, and Theme providers)
+│   ├── hooks/          # Custom hooks (local storage binders)
+│   ├── layout/         # Navigation bars and footer templates
+│   ├── pages/          # Full page views (Dashboard, Login, About, Blog, Contact)
+│   ├── utils/          # Calculations, tailwind class merge helpers
+│   ├── index.css       # Tailwind entry styles
+│   └── main.tsx        # React mounting entrypoint
+├── public/             # Static public assets
+├── tailwind.config.js  # Tailwind CSS parameters
+├── vite.config.ts      # Vite configuration with relative path setups
+├── package.json        # Dependencies and gh-pages scripts
+└── README.md           # Documentation (You are here)
+```
+
+---
+
 ## 🚀 Getting Started
-
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) (v18 or higher recommended)
-- A free [Gemini API Key](https://aistudio.google.com/) from Google AI Studio
 
 ### Run Locally
 
@@ -83,20 +101,20 @@ The Supervisor monitors your current focus sessions, evaluates completed timeblo
    ```bash
    npm install
    ```
-3. **Configure Environment Variables:**
-   Create a `.env.local` file at the root level and insert your key:
-   ```env
-   GEMINI_API_KEY=your_gemini_api_key_here
-   ```
-4. **Launch development server:**
+3. **Launch development server:**
    ```bash
    npm run dev
    ```
-   Open `http://localhost:3000` to run the app.
+   Open `http://localhost:5173` to run the app.
+
+### Deploy to GitHub Pages
+
+You can deploy the site live to GitHub Pages in one command:
+```bash
+npm run deploy
+```
 
 ---
-
-
 
 ## 📄 License
 
@@ -106,7 +124,7 @@ This project is licensed under the **MIT License** — see the [LICENSE](LICENSE
 
 <div align="center">
 
-**SYSTEM ONLINE. AWAITING EXECUTIVE INSTRUCTION.**
+**Master Your Money, Save Your Pocket**
 
 Developed by [Bhanu Teja](https://github.com/Bhanu-teja-VCE)
 
